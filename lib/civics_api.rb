@@ -11,7 +11,7 @@ class Civics_API
     begin
       @civic_info.representative_info_by_address(
         address: zipcode,
-        roles: %w[legislatorUpperBody,legislatorLowerBody],
+        roles: ['legislatorUpperBody','legislatorLowerBody'],
         levels: 'country'
       )
     rescue
@@ -37,12 +37,12 @@ class Civics_API
     else
       nil
     end
+  end
 
-    private
+  private
 
-    def check_for_nil(obj,index)
-      obj.nil? ? true : obj[index].nil? 
-    end
-
+  def check_for_nil(obj,index)
+    obj.nil? ? true : obj[index].nil? 
+  end
 
 end
