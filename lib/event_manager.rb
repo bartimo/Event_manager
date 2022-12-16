@@ -3,6 +3,7 @@ require 'google/apis/civicinfo_v2'
 require 'pry-byebug'
 require 'erb'
 require './lib/civics_api'
+require './lib/event_signup'
 
 def cleanup_zipcode(zip)
   zip.to_s.rjust(5, '0')[0..4]
@@ -32,14 +33,21 @@ attendees = CSV.read(
 
 erb_template = ERB.new File.read('form_letter.erb')
 civics = Civics_API.new('AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw')
+event_signup = Event_Signup.new()
+
 attendees.each_with_index do |row, index|
   id = index
   first_name = row[:first_name]
   last_name = row[:last_name]
   zipcode = cleanup_zipcode(row[:zipcode])
   phone = cleanup_phone(row[:homephone])
-  legislators = civics.representative_info_by_address(zipcode)
-  legislator_info = civics.build_legislator_array(legislators) unless legislators.nil?
-  form_letter = erb_template.result(binding)
-  save_thank_you_letter(id, form_letter)
+  event_signup.append_time(DateTime.strptime(row[:regdate], '%m/%d/%Y %H: %M'))
+  #legislators = civics.representative_info_by_address(zipcode)
+  #legislator_info = civics.build_legislator_array(legislators) unless legislators.nil?
+  #form_letter = erb_template.result(binding)
+  #save_thank_you_letter(id, form_letter)
+
 end
+
+p event_signup.hours
+p event_signup.days_of_week
